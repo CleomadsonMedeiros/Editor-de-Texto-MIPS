@@ -3,11 +3,10 @@ bem_vindo: .asciiz "Bem-vindo ao editor de texto MIPS\n"
 buffer: .space 20
 nome_arquivo: .asciiz "saida.txt"
 mensagem_erro: .asciiz "Erro ao abrir o arquivo"
-msg_buffer_cheio: .asciiz "\nErro: Buffer está cheio, encerrando programa..."
+msg_buffer_cheio: .asciiz "\nErro: Buffer está cheio"
 
 .text
 #Mudanças a serem feitas:
-#beq caso buffer fique cheio (Contador já foi feito {$t1, aumenta quando adiciona no buffer})
 #mudar a tecla colchete para uma melhor (Ctrl + S ou relacionado)
 #Implementar procedimento para apagar caractere
 #{
@@ -33,7 +32,6 @@ msg_buffer_cheio: .asciiz "\nErro: Buffer está cheio, encerrando programa..."
 # Inicialização do buffer + contador de caracteres
 la $t0, buffer
 li $t1, 0
-li $t5, 50
 
 #Syscall para imprimir a mensagem de bem-vindo
 li $v0, 4
@@ -47,12 +45,19 @@ li $v0, 12
 syscall
 move $t2, $v0
 
-beq $t1, $t5, buffer_cheio
-
 #Guarda o ASCII para "Colchete" em $t3 e faz um branch se o usuário digitou Colchete
 li $t3, 91
 beq $t2, $t3, detectado_colchete
 
+#Verificar se o buffer está cheio
+bne $t1, 20, continuacao
+
+li $v0, 4
+la $a0, msg_buffer_cheio
+syscall
+j loop_entrada
+
+continuacao:
 #Armazena o caractere em $t0(buffer), vai para a próxima célula de memória e aumenta o contador
 sb $t2, 0($t0)
 addi $t0, $t0, 1
@@ -65,12 +70,6 @@ li $v0, 13
 la $a0, nome_arquivo
 li $a1, 1
 syscall
-
-buffer_cheio:
-li $v0, 4
-la $a0, msg_buffer_cheio
-syscall
-j finalizar_programa
 
 #Erro ao abrir o arquivo
 blt $v0, 0, erro

@@ -3,6 +3,7 @@ bem_vindo: .asciiz "Bem-vindo ao editor de texto MIPS\n"
 buffer: .space 20
 nome_arquivo: .asciiz "saida.txt"
 mensagem_erro: .asciiz "Erro ao abrir o arquivo"
+msg_buffer_cheio: .asciiz "\nErro: Buffer está cheio, encerrando programa..."
 
 .text
 #Mudanças a serem feitas:
@@ -32,6 +33,7 @@ mensagem_erro: .asciiz "Erro ao abrir o arquivo"
 # Inicialização do buffer + contador de caracteres
 la $t0, buffer
 li $t1, 0
+li $t5, 50
 
 #Syscall para imprimir a mensagem de bem-vindo
 li $v0, 4
@@ -44,6 +46,8 @@ loop_entrada:
 li $v0, 12
 syscall
 move $t2, $v0
+
+beq $t1, $t5, buffer_cheio
 
 #Guarda o ASCII para "Colchete" em $t3 e faz um branch se o usuário digitou Colchete
 li $t3, 91
@@ -61,6 +65,12 @@ li $v0, 13
 la $a0, nome_arquivo
 li $a1, 1
 syscall
+
+buffer_cheio:
+li $v0, 4
+la $a0, msg_buffer_cheio
+syscall
+j finalizar_programa
 
 #Erro ao abrir o arquivo
 blt $v0, 0, erro

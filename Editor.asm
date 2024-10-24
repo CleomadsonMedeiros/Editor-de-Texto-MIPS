@@ -5,7 +5,7 @@ msg_erro: .asciiz "\nErro ao abrir o arquivo"
 msg_comandos: .asciiz "\nSalvar - s | Cancelar - (qualquer tecla)\n"
 msg_arquivo: .asciiz "\nDigite o nome o arquivo + extensão - Confirme com ':'\n"
 msg_cancelar: .asciiz "\nOperação cancelada\n"
-buffer: .space 50 #Caso queira alterar o tamanho do buffer, terá que alterar o limite do contador também
+buffer: .space 50 #Caso queira alterar o tamanho do buffer, terá que alterar o limite do contador também a
 nome_arquivo: .space 256
 
 .text
@@ -48,6 +48,9 @@ li $v0, 12
 syscall
 move $t2, $v0
 
+#Verifica se a entrada do usuário é "Backspace" (ASCII - 45);
+beq $t2, 45, backspace
+
 #Verifica se a entrada do usuário ($t2) é igual a ":"(ASCII - 58).
 beq $t2, 58, detectado_dois_pontos
 
@@ -66,6 +69,17 @@ sb $t2, 0($t0)
 addi $t0, $t0, 1
 addi $t1, $t1, 1
 j loop_entrada
+
+# Função para tratar o "Backspace"
+backspace:
+# Verifica se o buffer não está vazio
+ble $t1, 0, loop_entrada
+
+# Decrementa o contador e ajusta o ponteiro do buffer para apagar o último caractere
+addi $t0, $t0, -1
+addi $t1, $t1, -1
+j loop_entrada
+    
 #==========================================================================================
 
 #Salvar o texto em um arquivo

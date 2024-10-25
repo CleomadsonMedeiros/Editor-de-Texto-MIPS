@@ -48,6 +48,9 @@ li $v0, 12
 syscall
 move $t2, $v0
 
+#Verifica se a entrada do usuário é "Hífen" (ASCII - 45 -> "-");
+beq $t2, 45, backspace
+
 #Verifica se a entrada do usuário ($t2) é igual a ":"(ASCII - 58).
 beq $t2, 58, detectado_dois_pontos
 

@@ -5,17 +5,12 @@ msg_erro: .asciiz "\nErro ao abrir o arquivo"
 msg_comandos: .asciiz "\nSalvar - s | Cancelar - (qualquer tecla)\n"
 msg_arquivo: .asciiz "\nDigite o nome o arquivo + extensão - Confirme com ':'\n"
 msg_cancelar: .asciiz "\nOperação cancelada\n"
-buffer: .space 50 #Caso queira alterar o tamanho do buffer, terá que alterar o limite do contador também a
+quebra_linha: .asciiz "\n"
+buffer: .space 50 #Caso queira alterar o tamanho do buffer, terá que alterar o limite do contador também
 nome_arquivo: .space 256
 
 .text
 #Mudanças a serem feitas:
-#Implementar procedimento para apagar caractere.
-#{
-#- Irá detectar a tecla backspace (~08).
-#- Voltar células de memória/apagar (Carregar valor nulo).
-#- Diminuir contador.
-#}
 #Implementar procedimento para abrir um arquivo e edita-lo.
 #{
 #- Escrever no buffer todo conteúdo do arquivo.
@@ -76,10 +71,21 @@ backspace:
 ble $t1, 0, loop_entrada
 
 # Decrementa o contador e ajusta o ponteiro do buffer para apagar o último caractere
+li $t5, 0
+sb $t5, 0($t0)
 addi $t0, $t0, -1
+sb $t5, 0($t0)
 addi $t1, $t1, -1
+
+li $v0, 4
+la $a0, quebra_linha
+syscall
+
+li $v0, 4
+la $a0, buffer
+syscall
+
 j loop_entrada
-    
 #==========================================================================================
 
 #Salvar o texto em um arquivo

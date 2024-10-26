@@ -2,7 +2,7 @@
 msg_bem_vindo: .asciiz "Bem-vindo ao editor de texto MIPS - Use ':' para salvar o arquivo\n"
 msg_buffer_cheio: .asciiz "\nErro: Buffer está cheio\n"
 msg_erro: .asciiz "\nErro ao abrir o arquivo"
-msg_comandos: .asciiz "\nSalvar - s | Cancelar - (qualquer tecla)\n"
+msg_comandos: .asciiz "\nSalvar - s | Editar - e | Cancelar - c\n"
 msg_arquivo: .asciiz "\nDigite o nome o arquivo + extensão - Confirme com 'Enter'\n"
 msg_cancelar: .asciiz "\nOperação cancelada\n"
 quebra_linha: .asciiz "\n"
@@ -173,6 +173,7 @@ addi $t0, $t0, 1
 j contar_caractere
 
 terminada_contagem:
+#Fecha o arquivo para resetar o cursor
 li $v0, 16
 move $a0, $t3
 syscall
@@ -203,20 +204,13 @@ j loop_entrada
 escrita_arquivo:
 li $v0, 13
 la $a0, nome_arquivo
-li $a1, 1 #Escrita
+li $a1, 1 #Abrir em modo de escrita
 syscall
-move $t3, $v0
+move $t3, $v0 #Guardar descritor do arquivo
 
 blt $v0, 0, erro
 
-li $v0, 4
-la $a0, buffer
-syscall
-
-li $v0, 1
-move $a0, $t1
-syscall
-
+#Syscall para escrever no arquivo
 li $v0, 15
 move $a0, $t3
 la $a1, buffer
@@ -230,13 +224,11 @@ syscall
 j finalizar_programa
 
 erro:
-# Caso de erro ao abrir o arquivo
 li $v0, 4
 la $a0, msg_erro
 syscall
 
 finalizar_programa:
-#Finalizar o programa
 li $v0, 10
 syscall
 #==========================================================================================

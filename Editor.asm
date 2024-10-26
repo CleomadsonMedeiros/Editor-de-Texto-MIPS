@@ -83,8 +83,6 @@ syscall
 j loop_entrada
 #==========================================================================================
 
-#Salvar o texto em um arquivo
-#==========================================================================================
 #Se for detectado "dois pontos", abre a parte de comandos.
 detectado_dois_pontos:
 li $v0, 4
@@ -100,11 +98,11 @@ move $t2, $v0
 beq $t2, 115, salvar_arquivo
 beq $t2, 83, salvar_arquivo
 
-#Verifica se o usuário digitou "e/E" após ":" para editar o arquivo.
+#Verifica se o usuário digitou "e/E" após ":" para Editar o arquivo.
 beq $t2, 101, editar_arquivo
 beq $t2, 69, editar_arquivo
 
-#Verifica se o usuário digitou "c/C" após ":" para editar o arquivo.
+#Verifica se o usuário digitou "c/C" após ":" para Cancelar a operação.
 beq $t2, 99, cancelar
 beq $t2, 67, cancelar
 
@@ -120,6 +118,8 @@ editar_arquivo:
 li $t6, 1 #1 para o flag de escrita
 li $t1, 0
 
+#Salvar o texto em um arquivo
+#==========================================================================================
 salvar_arquivo:
 beq $t6, 2, escrita_arquivo
 #Imprime para o usuário digitar o nome do arquivo.
@@ -194,7 +194,7 @@ li $v0, 16
 move $a0, $t3
 syscall
 
-li $t6, 2
+li $t6, 2 #Atualização do flag, indicando que terminou a leitura do arquivo
 
 li $v0, 4
 la $a0, buffer

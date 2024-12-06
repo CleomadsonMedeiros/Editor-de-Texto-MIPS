@@ -1,6 +1,3 @@
-Apresentação para a disciplina de Organização e Arquitetura de Computadores:
-[Video](https://drive.google.com/file/d/1Pd3K804WsqAXe5jUCjNgqDQvK1_pLheQ/view?usp=sharing)
-
 # Editor de Texto em MIPS
 
 Este é um editor de texto simples criado em Assembly MIPS para ser utilizado no simulador MARS. Ele permite aos usuários escrever e salvar textos, bem como editar arquivos de texto existentes.
